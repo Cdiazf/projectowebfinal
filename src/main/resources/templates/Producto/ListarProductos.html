@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="layout::head">
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<nav th:insert="layout::menu"></nav>
+
+<div class="page-wrapper">
+
+    <!-- Page Content -->
+    <div class="content container-fluid">
+<div class="page-header">
+    <div class="row align-items-center">
+        <div class="col">
+            <h3 class="page-title">Productos</h3>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                <li class="breadcrumb-item active">Producto</li>
+            </ul>
+        </div>
+        <div class="col-auto float-right ml-auto">
+            <a href="#" class="btn add-btn" data-toggle="modal" data-target="#add_producto"><i class="fa fa-plus"></i> Agregar Producto</a>
+            <div class="view-icons">
+                <a href="#" class="grid-view btn btn-link"><i class="fa fa-th"></i></a>
+                <a href="#" class="list-view btn btn-link active"><i class="fa fa-bars"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table class="table table-striped custom-table datatable">
+                <thead>
+                <tr>
+                    <th>Avatar</th>
+                    <th>ID Producto</th>
+                    <th>Descripción</th>
+                    <th>Estado</th>
+                    <th>ID Tipo</th>
+                    <th>Precio</th>
+                    <th>Stock</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="producto : ${lstProductos}">
+                    <td>
+                        <h2 class="table-avatar">
+                            <a href="profile.html" class="avatar"><img alt="" src="assets/img/profiles/avatar-02.jpg"></a>
+                            <a href="profile.html">John Doe <span>Web Designer</span></a>
+                        </h2>
+                    </td>
+                    <td th:text="${producto.idprod}"></td>
+                    <td th:text="${producto.descripcion}"></td>
+                    <td th:text="${producto.estado}"></td>
+                    <td th:text="${producto.idtipo}"></td>
+                    <td th:text="${producto.precio}"></td>
+                    <td th:text="${producto.stock}"></td>
+                    <td class="text-right">
+                        <div class="dropdown dropdown-action">
+                            <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#edit_employee"><i class="fa fa-pencil m-r-5"></i> Edit</a>
+                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_employee"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+</div>
+
+
+<!-- Agregar Producto Modal -->
+<div id="add_producto" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Agregar Producto</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" >
+                <form th:action="@{saveProducto}" th:object="${producto}" method="POST">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Descripcion <span class="text-danger">*</span></label>
+                                <input class="form-control" type="text" th:field="*{descripcion}">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Estado</label>
+                                <input class="form-control" type="number" th:field="*{estado}">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">IdTipo <span class="text-danger">*</span></label>
+                                <input class="form-control" type="number" th:field="*{idtipo}">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Precio <span class="text-danger">*</span></label>
+                                <input class="form-control" type="number" th:field="*{precio}">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Stock <span class="text-danger">*</span></label>
+                                <input class="form-control" type="number" th:field="*{stock}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="submit-section">
+                        <button class="btn btn-primary submit-btn">Agregar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Add Employee Modal -->
+
+</body>
+</html>
