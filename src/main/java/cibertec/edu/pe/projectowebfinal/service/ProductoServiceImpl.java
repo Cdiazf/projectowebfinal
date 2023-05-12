@@ -23,19 +23,21 @@ public class ProductoServiceImpl implements ProductoService{
     }
 
     @Override
-    public Producto getProductoById(String id) {
-        Optional<Producto> optional=productoRepository.findById(id);
+    public Producto getProductoById(String idprod) {
+        Optional<Producto> optional=productoRepository.findById(idprod);
         Producto producto=null;
         if(optional.isPresent()){
             producto=optional.get();
         }else{
-            throw new RuntimeException("Producto no encontrado con el ID::"+id);
+            throw new RuntimeException("Producto no encontrado con el ID::"+idprod);
         }
         return producto;
     }
 
     @Override
-    public void deleteProductoById(String id) {
-        this.productoRepository.deleteById(id);
+    public void deleteProductoById(String idprod) {
+        this.productoRepository.deleteById(idprod);
     }
+
+
 }

@@ -6,10 +6,7 @@ import cibertec.edu.pe.projectowebfinal.service.ProductoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/Producto")
@@ -31,4 +28,24 @@ public class ProductosController {
         productoService.saveProducto(producto);
         return "redirect:/Producto/listadoProductos";
     }
+
+    @GetMapping("/updateProducto/{idprod}")
+    public String updateProducto(@PathVariable(value = "idprod") String idprod, Model model) {
+        // get producto from the service
+        Producto producto = productoService.getProductoById(idprod);
+        System.out.print(idprod);
+
+        // set producto as a model attribute to pre-populate the form
+        model.addAttribute("producto", producto);
+        return "redirect:/Producto/listadoProductos";
+
+    }
+
+    @GetMapping("/deleteProducto/{idprod}")
+    public String deleteProducto(@PathVariable(value="idprod") String idprod) {
+        this.productoService.deleteProductoById(idprod);
+        System.out.print(idprod);
+        return "redirect:/Producto/listadoProductos";
+    }
+
 }

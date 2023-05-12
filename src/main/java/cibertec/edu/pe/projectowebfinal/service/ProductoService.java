@@ -8,7 +8,8 @@ public interface ProductoService {
 
     List<Producto> getAllProductos();
     void saveProducto(Producto proveedor);
-    Producto getProductoById(String id);
-    void deleteProductoById(String id);
+
+    Producto getProductoById(String idprod);
+    void deleteProductoById(String idprod);
 
 }
