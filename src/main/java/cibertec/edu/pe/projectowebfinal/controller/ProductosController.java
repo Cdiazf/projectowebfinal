@@ -44,7 +44,6 @@ public class ProductosController {
     @GetMapping("/deleteProducto/{idprod}")
     public String deleteProducto(@PathVariable(value="idprod") String idprod) {
         this.productoService.deleteProductoById(idprod);
-        System.out.print(idprod);
         return "redirect:/Producto/listadoProductos";
     }
 

@@ -67,12 +67,45 @@
                             <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                             <div class="dropdown-menu dropdown-menu-right">
                                 <a class="dropdown-item" th:href="@{/updateProducto/{idprod}(idprod=${producto.idprod})}" data-toggle="modal"  data-target="#update_producto"> Editar</a>
-                                <a class="dropdown-item" th:href="@{/deleteProducto/{idprod}(idprod=${producto.idprod})}" data-toggle="modal" th:data-id="${producto.idprod}"> Borrar</a>
+                                <a class="dropdown-item delete-btn" th:href="@{/deleteProducto/{idprod}(idprod=${producto.idprod})}" data-toggle="modal" th:data-id="${producto.idprod}"> Borrar</a>
                             </div>
                         </div>
                     </td>
                 </tr>
+                    <script>
+                        $(document).ready(function() {
+                            $('.delete-btn').on('click', function(e) {
+                                e.preventDefault();
+                                var idprod = $(this).data('id');
 
+                                // Muestra la confirmacion para borrar
+                                var confirmDelete = confirm("Esta seguro que desea borrar ese producto?");
+
+                                // procede con el brorrado si el usuaio confirma
+                                if (confirmDelete) {
+                                    // Hace con AJAX un request para el delete endpoint
+                                    $.ajax({
+                                        url: '/Producto/deleteProducto/' + idprod,
+                                        type: 'GET',
+                                        success: function(response) {
+                                            // Manejo del delte (opcional)
+                                            console.log('Delete request successful');
+
+
+                                            // redirecionar a la lista de productos
+                                            window.location.href = '/Producto/listadoProductos';
+                                        },
+                                        error: function(xhr, status, error) {
+                                            // en caso de error
+                                            console.log('Error occurred while deleting: ' + error);
+
+                                        }
+                                    });
+                                }
+                            });
+                        });
+
+                    </script>
 
                 </tbody>
             </table>
