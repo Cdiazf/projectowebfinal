@@ -5,6 +5,7 @@ import cibertec.edu.pe.projectowebfinal.repository.IProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,6 +38,29 @@ public class ProductoServiceImpl implements ProductoService{
     @Override
     public void deleteProductoById(String idprod) {
         this.productoRepository.deleteById(idprod);
+    }
+
+    @Override
+    public List<Producto> consultarProductosPorNombre(String nombre) {
+        List<Producto> productosConsultados = new ArrayList<>();
+
+        // consultar producto por descripcion
+        for (Producto producto: getAllProductos()){
+            if (producto.getIdprod().toLowerCase().contains(nombre.toLowerCase())){
+                productosConsultados.add(producto);
+            }
+        }
+        return productosConsultados;
+    }
+
+    @Override
+    public List<Producto> consultarProductosPorIdTipo(Long idTipo) {
+        return null;
+    }
+
+    @Override
+    public List<Producto> consultarProductosPorEstado(String estado) {
+        return null;
     }
 
 
