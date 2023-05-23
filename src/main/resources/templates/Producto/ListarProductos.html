@@ -52,14 +52,14 @@
                 <tr th:each="producto : ${lstProductos}">
                     <td>
                         <h2 class="table-avatar">
-                            <a href="profile.html" class="avatar"><img alt="" src="assets/img/profiles/avatar-02.jpg"></a>
-                            <a href="profile.html">John Doe <span>Web Designer</span></a>
+                            <a href="#" class="avatar"><img alt="" src="#"></a>
+                            <a href="#">John Doe <span>Web Designer</span></a>
                         </h2>
                     </td>
                     <td th:text="${producto.idprod}"></td>
                     <td th:text="${producto.descripcion}"></td>
                     <td th:text="${producto.estado}"></td>
-                    <td th:text="${producto.idtipo}"></td>
+                    <td th:text="${producto.categoria.nombrecategoria}" ></td>
                     <td th:text="${producto.precio}"></td>
                     <td th:text="${producto.stock}"></td>
                     <td class="text-right">
@@ -83,12 +83,12 @@
 
                                 // procede con el brorrado si el usuaio confirma
                                 if (confirmDelete) {
-                                    // Hace con AJAX un request para el delete endpoint
+                                    // Hacer con AJAX un request para el delete endpoint
                                     $.ajax({
                                         url: '/Producto/deleteProducto/' + idprod,
                                         type: 'GET',
                                         success: function(response) {
-                                            // Manejo del delte (opcional)
+                                            // Manejo del delete (opcional)
                                             console.log('Delete request successful');
 
 
@@ -110,40 +110,36 @@
                                 e.preventDefault();
                                 var idprod = $(this).data('id');
 
-                                // Make an AJAX request to fetch the product details
+                                // Hacer con AJAX un request to fetch the product details
                                 $.ajax({
                                     url: '/Producto/updateProducto/' + idprod,
                                     type: 'GET',
                                     success: function(response) {
-                                        // Handle the success response
+                                        // Manejo de  success response
                                         console.log(response);
                                         console.log('Update request successful');
 
-                                        // Populate the modal with the product details
+                                        // Cargar the modal con los  product details
                                         $('#update_producto').find('input[name="idprod"]').val(response.idprod);
                                         $('#update_producto').find('input[name="descripcion"]').val(response.descripcion);
                                         $('#update_producto').find('input[name="estado"]').val(response.estado);
-                                        $('#update_producto').find('input[name="idtipo"]').val(response.idtipo);
+                                        $('#update_producto').find('input[name="categoria.idtipo"]').val(response.categoria.idtipo);
                                         $('#update_producto').find('input[name="precio"]').val(response.precio);
                                         $('#update_producto').find('input[name="stock"]').val(response.stock);
 
-
-                                        // Show the modal
+                                        // Mostrar the modal
                                         $('#update_producto').modal('show');
-
 
                                     },
                                     error: function(xhr, status, error) {
-                                        // Handle the error response
+                                        // Manejo de error error response
                                         console.log(idprod);
                                         console.log('Error occurred while updating: ' + error);
-                                        // Perform any error handling actions
+
                                     }
                                 });
                             });
                         });
-
-
 
                     </script>
 
@@ -154,7 +150,7 @@
 </div>
 </div>
 </div>
-</div>
+
 
 
 <!-- Agregar Producto Modal -->
@@ -184,8 +180,30 @@
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label class="col-form-label">IdTipo <span class="text-danger">*</span></label>
-                                <input class="form-control" type="number" th:field="*{idtipo}">
+                                <label class="col-form-label">Categoria <span class="text-danger">*</span></label>
+                                <td >
+
+                                    <div class="dropdown">
+                                        <a id="categoryDropdown" class="btn btn-white btn-sm btn-rounded dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                            <span th:if="${producto.categoria != null}" th:text="${producto.categoria.nombrecategoria}"  ></span>
+                                            <span th:unless="${categoria != null}">Select Category</span>
+                                        </a>
+                                        <div class="dropdown-menu">
+                                            <a th:each="categoria : ${lstCategoria}" class="dropdown-item" th:text="${categoria.nombrecategoria}" th:data-idtipo="${categoria.idtipo}" onclick="selectCategory(this)"></a>
+                                        </div>
+                                    </div>
+                                    <input id="categoriaIdInput" type="hidden" th:field="*{categoria.idtipo}">
+
+                                    <script>
+                                        function selectCategory(element) {
+                                            var selectedCategory = $(element).text();
+                                            var categoryId = $(element).data("idtipo");
+                                            console.log(categoryId);
+                                            $('#categoryDropdown').html(selectedCategory);
+                                            $('#categoriaIdInput').val(categoryId);
+                                        }
+                                    </script>
+                                </td>
                             </div>
                         </div>
                         <div class="col-sm-6">
@@ -242,13 +260,13 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label class="col-form-label">IdTipo <span class="text-danger">*</span></label>
-                                <input class="form-control" type="number" th:field="*{idtipo}">
+                                <input class="form-control" type="text" th:field="*{categoria.idtipo}">
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label class="col-form-label">Precio <span class="text-danger">*</span></label>
-                                <input class="form-control" type="number" th:field="*{precio}">
+                                <input class="form-control" type="text" th:field="*{precio}">
                             </div>
                         </div>
                         <div class="col-sm-6">
@@ -266,7 +284,7 @@
         </div>
     </div>
 </div>
-<!-- /Add Producto Modal -->
+<!-- /Update Producto Modal -->
 
 </body>
 </html>

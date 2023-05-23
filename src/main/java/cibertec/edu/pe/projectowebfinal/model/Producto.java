@@ -21,8 +21,9 @@ public class Producto {
     private int stock;
     @Column(name ="precio")
     private double precio;
-    @Column(name ="idtipo")
-    private int idtipo;
+    @ManyToOne
+    @JoinColumn(name = "idtipo")
+    private Categorias categoria;
     @Column(name ="estado")
     private int estado;
 

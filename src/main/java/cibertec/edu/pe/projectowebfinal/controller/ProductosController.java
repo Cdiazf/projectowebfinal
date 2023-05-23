@@ -1,7 +1,9 @@
 package cibertec.edu.pe.projectowebfinal.controller;
 
+import cibertec.edu.pe.projectowebfinal.model.Categorias;
 import cibertec.edu.pe.projectowebfinal.model.Producto;
 import cibertec.edu.pe.projectowebfinal.repository.IProductoRepository;
+import cibertec.edu.pe.projectowebfinal.service.CategoriaService;
 import cibertec.edu.pe.projectowebfinal.service.ProductoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,43 +19,24 @@ public class ProductosController {
 
     @Autowired
     private ProductoService productoService;
+    @Autowired
+    private CategoriaService categoriaService;
 
     @GetMapping("/listadoProductos")
     public String listadoProductos(Model model){
         Producto producto= new Producto();
         model.addAttribute("lstProductos",productoService.getAllProductos());
+        model.addAttribute("lstCategoria",categoriaService.getAllCategorias());
         model.addAttribute("producto",producto);
         return "Producto/ListarProductos";
     }
 
     @PostMapping("/saveProducto")
-    public String saveProducto(@ModelAttribute("producto")Producto producto){
+    public String saveProducto(@ModelAttribute("producto") Producto producto){
         productoService.saveProducto(producto);
         return "redirect:/Producto/listadoProductos";
     }
 
-//    @GetMapping("/updateProducto/{idprod}")
-//    public String updateProducto(@PathVariable(value = "idprod") String idprod, Model model) {
-//        // get producto from the service
-//        Producto producto = productoService.getProductoById(idprod);
-//        System.out.print(idprod);
-//
-//        // set producto as a model attribute to pre-populate the form
-//        model.addAttribute("producto", producto);
-//        return "/updateProducto/{idprod}";
-//
-//    }
-//
-//    @GetMapping("/updateProducto")
-//    public String updateProducto(@RequestParam("idprod") String idprod, Model model) {
-//        // Get the product from the service
-//        Producto producto = productoService.getProductoById(idprod);
-//
-//        // Set the product as a model attribute to pre-populate the form
-//        model.addAttribute("producto", producto);
-//
-//        return "redirect:/Producto/listadoProductos";
-//    }
 
     @GetMapping("/updateProducto/{idprod}")
     public ResponseEntity<Producto> updateProducto(@PathVariable(value = "idprod") String idprod) {
