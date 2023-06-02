@@ -3,6 +3,7 @@ package cibertec.edu.pe.projectowebfinal.controller;
 import cibertec.edu.pe.projectowebfinal.model.Categorias;
 import cibertec.edu.pe.projectowebfinal.model.Producto;
 import cibertec.edu.pe.projectowebfinal.repository.IProductoRepository;
+import cibertec.edu.pe.projectowebfinal.request.ConsultaProductosRequest;
 import cibertec.edu.pe.projectowebfinal.service.CategoriaService;
 import cibertec.edu.pe.projectowebfinal.service.ProductoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,26 +60,37 @@ public class ProductosController {
         return "redirect:/Producto/listadoProductos";
     }
 
-    @GetMapping("/consultar")
-    public List<Producto> consultarProductos(@RequestParam(required = false) String nombre,
-                                             @RequestParam(required = false) Long idTipo,
-                                             @RequestParam(required = false) String estado) {
-        // Check which parameters are provided and call the corresponding service method
 
-        if (nombre != null) {
+    @PostMapping("/consultar")
+    public ResponseEntity<String> consultarProductos(@RequestBody ConsultaProductosRequest request) {
+        // Extract the parameters from the request object
+        String nombre = request.getDescripcion();
+        String idTipo = request.getIdTipo();
+        Integer estado = request.getEstado();
+
+        // Your logic to search for productos based on the provided parameters
+        List<Producto> productos;
+        if (nombre != null && !nombre.trim().isEmpty()) {
             // Search by nombre
-            return productoService.consultarProductosPorNombre(nombre);
+            productos = productoService.consultarProductosPorNombre(nombre);
         } else if (idTipo != null) {
             // Search by idtipo
-            return productoService.consultarProductosPorIdTipo(idTipo);
-        } else if (estado != null) {
+            productos = productoService.consultarProductosPorIdTipo(idTipo);
+        } else if (estado != 0) {
             // Search by estado
-            return productoService.consultarProductosPorEstado(estado);
+            productos = productoService.consultarProductosPorEstado(estado);
         } else {
             // No search criteria provided, return all productos
-            return productoService.getAllProductos();
+            productos = productoService.getAllProductos();
         }
-    }
+
+
+        // Convert the list of productos to HTML markup using the ProductosService
+        String htmlMarkup = productoService.convertProductosToHTML(productos);
+
+        // Return the HTML markup as the response
+        return ResponseEntity.ok(htmlMarkup);
+        }
 
 
 
