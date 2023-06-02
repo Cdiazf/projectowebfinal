@@ -13,7 +13,9 @@ public interface ProductoService {
     void deleteProductoById(String idprod);
     List<Producto> consultarProductosPorNombre(String consulta);
 
-    List<Producto> consultarProductosPorIdTipo(Long idTipo);
+    List<Producto> consultarProductosPorIdTipo(String nombreCategoria);
 
-    List<Producto> consultarProductosPorEstado(String estado);
+    List<Producto> consultarProductosPorEstado(Integer estado);
+
+    String convertProductosToHTML( List<Producto> productos);
 }

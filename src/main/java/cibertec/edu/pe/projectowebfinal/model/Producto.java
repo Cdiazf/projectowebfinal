@@ -25,7 +25,7 @@ public class Producto {
     @JoinColumn(name = "idtipo")
     private Categorias categoria;
     @Column(name ="estado")
-    private int estado;
+    private Integer estado;
 
 
 }

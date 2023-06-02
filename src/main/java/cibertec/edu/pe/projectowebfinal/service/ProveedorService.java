@@ -2,6 +2,7 @@ package cibertec.edu.pe.projectowebfinal.service;
 
 import java.util.List;
 
+import cibertec.edu.pe.projectowebfinal.model.Producto;
 import cibertec.edu.pe.projectowebfinal.model.Proveedor;
 public interface ProveedorService {
 
@@ -19,9 +20,11 @@ public interface ProveedorService {
 	Proveedor getProveedorById(String idprov);
 
 
-	
 
 
 
-	
+
+
+
+
 }
