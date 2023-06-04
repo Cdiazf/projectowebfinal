@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="layout::head">
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div th:insert="layout::upperSide" ></div>
+<nav th:insert="layout::menu"></nav>
+
+<div class="page-wrapper">
+
+    <!-- Page Content -->
+    <div class="content container-fluid">
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="page-title">Orden de Compra</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Ordenes</li>
+                    </ul>
+                </div>
+                <div class="col-auto float-right ml-auto">
+                    <a href="#" class="btn add-btn" data-toggle="modal" data-target="#add_ordenCompra"><i class="fa fa-plus"></i> Agregar Orden Compra</a>
+                    <div class="view-icons">
+                        <a href="#" class="grid-view btn btn-link"><i class="fa fa-th"></i></a>
+                        <a href="#" class="list-view btn btn-link active"><i class="fa fa-bars"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table class="table table-striped custom-table datatable">
+                <thead>
+                <tr>
+                    <th>ID Orden de Compra</th>
+                    <th>Fecha</th>
+                    <th>Id proveedor</th>
+                    <th>Id Usuario</th>            
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="ordenCompra: ${lstorden}">
+                    <td th:text="${ordenCompra.idorden}"></td>
+                    <td th:text="${ordenCompra.fecha}"></td>
+                    <td th:text="${ordenCompra.idprov}"></td>
+                    <td th:text="${ordenCompra.idusu}"></td>
+                    <td class="text-right">
+                        <div class="dropdown dropdown-action">
+                            <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a class="dropdown-item update-btn" href="#" data-toggle="modal"  data-target="#update_ordenCompra"   th:data-id="${ordenCompra.idorden}"> Editar</a>
+                                <a class="dropdown-item delete-btn" th:href="@{/deleteOrden/{idorden}(idorden=${ordenCompra.idorden})}" data-toggle="modal" th:data-id="${ordenCompra.idorden}"> Borrar</a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                    <script>
+                        $(document).ready(function() {
+                            $('.delete-btn').on('click', function(e) {
+                                e.preventDefault();
+                                var idorden = $(this).data('id');
+
+                                // Muestra la confirmacion para borrar
+                                var confirmDelete = confirm("Esta seguro que desea borrar la Orden de Compra?");
+                                if (confirmDelete) {
+                                    $.ajax({
+                                        url: '/OrdenCompra/deleteOrden/' + idorden,
+                                        type: 'GET',
+                                        success: function(response) {
+                                            console.log('Delete request successful');
+                                            window.location.href = '/OrdenCompra/listadoOrden';
+                                        },
+                                        error: function(xhr, status, error) {
+                                            console.log('Error occurred while deleting: ' + error);
+
+                                        }
+                                    });
+                                }
+                            });
+                        });
+                        
+                        
+
+                        $(document).ready(function() {
+                            $('.update-btn').on('click', function(e) {
+                                e.preventDefault();
+                                var idorden = $(this).data('id');
+
+                                // Make an AJAX request to fetch the product details
+                                $.ajax({
+                                    url: '/OrdenCompra/updateOrden/' + idorden,
+                                    type: 'GET',
+                                    success: function(response) {
+                                        
+                                        console.log(response);
+                                        console.log('Update request successful');
+                                        
+
+                                        // Populate the modal with the product details
+                                        $('#update_ordenCompra').find('input[name="idorden"]').val(response.idorden);
+                                        $('#update_ordenCompra').find('input[name="fecha"]').val(response.fecha);
+                                        $('#update_ordenCompra').find('input[name="idprov"]').val(response.idprov);
+                                        $('#update_ordenCompra').find('input[name="idusu"]').val(response.idusu);
+                                   
+
+
+                                        // Show the modal
+                                        $('#update_ordenCompra').modal('window.location.href = /OrdenCompra/listadoOrden');
+                                        
+                                        
+                                    },
+                                    error: function(xhr, status, error) {
+                                    	
+                                        // Handle the error response
+                                        console.log(idorden);
+                                        console.log('Error occurred while updating: ' + error);
+                                        // Perform any error handling actions
+                                    }
+                                });
+                            });
+                        });
+
+
+
+                    </script>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+</div>
+
+
+<!-- Agregar Producto Modal -->
+<div id="add_ordenCompra" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Agregar Orden de Compra</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" >
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" >
+                <form th:action="@{saveOrdenCompra}" th:object="${ordenCompra}" method="POST">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Fecha<span class="text-danger">*</span></label>
+                                <input class="form-control" type="text" th:field="*{fecha}">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Id Proveedor</label>
+                                <input class="form-control" type="text" th:field="*{idprov}">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Id Usuario <span class="text-danger">*</span></label>
+                                <input class="form-control" type="text" th:field="*{idusu}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="submit-section">
+                        <button class="btn btn-primary submit-btn">Agregar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Add OrdenCompra Modal -->
+
+<!-- Actualizar OrdenCompra Modal -->
+<div id="update_ordenCompra" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Actualizar Orden de Compra</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"   >
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" >
+                <form th:action="@{saveOrdenCompra}" th:object="${ordenCompra}" method="POST">
+                    <div class="row">
+                    <input type="hidden"   th:field="*{idorden}" />
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Fecha<span class="text-danger">*</span></label>
+                                <input class="form-control" type="date" th:field="*{fecha}">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Id Proveedor</label>
+                                <input class="form-control" type="text" th:field="*{idprov}">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Id Usuario<span class="text-danger">*</span></label>
+                                <input class="form-control" type="text" th:field="*{idusu}">
+                            </div>
+                        </div> 
+                            
+                    </div>
+                    <div class="submit-section">
+                        <button class="btn btn-primary submit-btn">Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Add OrdenCompra Modal -->
+
+</body>
+</html>

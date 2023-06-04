@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="layout::head">
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div th:insert="layout::upperSide" ></div>
+<nav th:insert="layout::menu"></nav>
+
+<div class="page-wrapper">
+
+    <!-- Page Content -->
+    <div class="content container-fluid">
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="page-title">Proveedores</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Proveedores</li>
+                    </ul>
+                </div>
+                <div class="col-auto float-right ml-auto">
+                    <a href="#" class="btn add-btn" data-toggle="modal" data-target="#add_proveedor"><i class="fa fa-plus"></i> Agregar Proveedor</a>
+                    <div class="view-icons">
+                        <a href="#" class="grid-view btn btn-link"><i class="fa fa-th"></i></a>
+                        <a href="#" class="list-view btn btn-link active"><i class="fa fa-bars"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table class="table table-striped custom-table datatable">
+                <thead>
+                <tr>
+                    <th>Avatar</th>
+                    <th>ID Proveedor</th>
+                    <th>Nombre</th>
+                    <th>Direccion</th>
+                    <th>Telefono</th>            
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="proveedor : ${lstProveedor}">
+                    <td>
+                        <h2 class="table-avatar">
+                            <a href="profile.html" class="avatar"><img alt="" src="assets/img/profiles/avatar-02.jpg"></a>
+                            <a href="profile.html">John Doe <span>Web Designer</span></a>
+                        </h2>
+                    </td>
+                    <td th:text="${proveedor.idprov}"></td>
+                    <td th:text="${proveedor.nombre}"></td>
+                    <td th:text="${proveedor.direccion}"></td>
+                    <td th:text="${proveedor.telefono}"></td>
+                    <td class="text-right">
+                        <div class="dropdown dropdown-action">
+                            <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a class="dropdown-item update-btn" href="#" data-toggle="modal"  data-target="#update_proveedor"   th:data-id="${proveedor.idprov}"> Editar</a>
+                                <a class="dropdown-item delete-btn" th:href="@{/deleteProveedor/{idprov}(idprov=${proveedor.idprov})}" data-toggle="modal" th:data-id="${proveedor.idprov}"> Borrar</a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                    <script>
+                        $(document).ready(function() {
+                            $('.delete-btn').on('click', function(e) {
+                                e.preventDefault();
+                                var idprov = $(this).data('id');
+
+                                // Muestra la confirmacion para borrar
+                                var confirmDelete = confirm("Esta seguro que desea borrar al Proveedor?");
+
+                                // procede con el brorrado si el usuaio confirma
+                                if (confirmDelete) {
+                                    // Hace con AJAX un request para el delete endpoint
+                                    $.ajax({
+                                        url: '/Proveedor/deleteProveedor/' + idprov,
+                                        type: 'GET',
+                                        success: function(response) {
+                                            // Manejo del delte (opcional)
+                                            console.log('Delete request successful');
+
+
+                                            // redirecionar a la lista de productos
+                                            window.location.href = '/Proveedor/listadoProveedor';
+                                        },
+                                        error: function(xhr, status, error) {
+                                            // en caso de error
+                                            console.log('Error occurred while deleting: ' + error);
+
+                                        }
+                                    });
+                                }
+                            });
+                        });
+                        
+                        
+
+                        $(document).ready(function() {
+                            $('.update-btn').on('click', function(e) {
+                                e.preventDefault();
+                                var idprov = $(this).data('id');
+
+                                // Make an AJAX request to fetch the product details
+                                $.ajax({
+                                    url: '/Proveedor/updateProveedor/' + idprov,
+                                    type: 'GET',
+                                    success: function(response) {
+                                        // Handle the success response
+                                        console.log(response);
+                                        console.log('Update request successful');
+                                        
+
+                                        // Populate the modal with the product details
+                                        $('#update_proveedor').find('input[name="idprov"]').val(response.idprov);
+                                        $('#update_proveedor').find('input[name="nombre"]').val(response.nombre);
+                                        $('#update_proveedor').find('input[name="direccion"]').val(response.direccion);
+                                        $('#update_proveedor').find('input[name="telefono"]').val(response.telefono);
+                                   
+
+
+                                        // Show the modal
+                                        $('#update_proveedor').modal('window.location.href = /Proveedor/listadoProveedor');
+                                        
+                                        
+                                    },
+                                    error: function(xhr, status, error) {
+                                    	
+                                        // Handle the error response
+                                        console.log(idprov);
+                                        console.log('Error occurred while updating: ' + error);
+                                        // Perform any error handling actions
+                                    }
+                                });
+                            });
+                        });
+
+
+
+                    </script>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+</div>
+
+
+<!-- Agregar Producto Modal -->
+<div id="add_proveedor" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Agregar Producto</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" >
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" >
+                <form th:action="@{saveProveedor}" th:object="${proveedor}" method="POST">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Nombre <span class="text-danger">*</span></label>
+                                <input class="form-control" type="text" th:field="*{nombre}">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Direccion</label>
+                                <input class="form-control" type="text" th:field="*{direccion}">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Telefono <span class="text-danger">*</span></label>
+                                <input class="form-control" type="text" pattern="[0-9]{9}" th:field="*{telefono}">
+                            </div>
+                        </div>
+                       
+                        
+                    </div>
+                    <div class="submit-section">
+                        <button class="btn btn-primary submit-btn">Agregar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Add Producto Modal -->
+
+<!-- Actualizar Producto Modal -->
+<div id="update_proveedor" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Actualizar Proveedor</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"   >
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" >
+                <form th:action="@{saveProveedor}" th:object="${proveedor}" method="POST">
+                    <div class="row">
+                    <input type="hidden"   th:field="*{idprov}" />
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Nombre <span class="text-danger">*</span></label>
+                                <input class="form-control" type="text" th:field="*{nombre}">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Direccion</label>
+                                <input class="form-control" type="text" th:field="*{direccion}">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Telefono <span class="text-danger">*</span></label>
+                                <input class="form-control" type="text" pattern="[0-9]{9}" th:field="*{telefono}">
+                            </div>
+                        </div>                                              
+                    </div>
+                    <div class="submit-section">
+                        <button class="btn btn-primary submit-btn">Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Add Producto Modal -->
+
+</body>
+</html>

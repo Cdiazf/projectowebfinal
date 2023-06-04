@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="layout::head">
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div th:insert="layout::upperSide" ></div>
+<nav th:insert="layout::menu"></nav>
+
+<div class="page-wrapper">
+
+    <!-- Page Content -->
+    <div class="content container-fluid">
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="page-title">Productos</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Producto</li>
+                    </ul>
+                </div>
+                <div class="col-auto float-right ml-auto">
+                    <a href="#" class="btn add-btn" data-toggle="modal" data-target="#add_producto"><i class="fa fa-plus"></i> Agregar Producto</a>
+                    <div class="view-icons">
+                        <a href="#" class="grid-view btn btn-link"><i class="fa fa-th"></i></a>
+                        <a href="#" class="list-view btn btn-link active"><i class="fa fa-bars"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Search Filter -->
+        <div class="row filter-row m-b-10">
+            <div class="col-sm-6 col-md-3">
+                <div class="form-group form-focus">
+                    <input id="nombre" type="text" class="form-control floating">
+                    <label class="focus-label">Nombre</label>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3">
+                <div class="form-group form-focus">
+                    <input id="idTipo" type="text" class="form-control floating">
+                    <label class="focus-label">Categoria</label>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3">
+                <div class="form-group form-focus">
+                    <input id="estado" type="text" class="form-control floating">
+                    <label class="focus-label">Estado</label>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3">
+                <a href="#" class="btn btn-success btn-block" onclick="buscarProductos()">Buscar</a>
+            </div>
+
+        </div>
+        <!-- Search Filter -->
+
+        <script>
+            function buscarProductos() {
+                var nombre = $("#nombre").val();
+                var idTipo = $("#idTipo").val();
+                var estado = $("#estado").val();
+
+                var request = {
+                    descripcion: nombre,
+                    idTipo: idTipo,
+                    estado: estado
+                };
+
+                $.ajax({
+                    url: "/Producto/consultar",
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify(request),
+
+                    success: function(response) {
+                        // Update the table with the fetched data
+                        console.log(response);
+                        console.log(estado);
+
+                        $("#productos-table tbody").html(response);
+                    },
+                    error: function(xhr, status, error) {
+
+                        console.log("Error occurred while searching: " + error);
+                    }
+                });
+            }
+
+
+        </script>
+
+
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table class="table table-striped custom-table datatable" id="productos-table">
+                <thead>
+                <tr>
+                    <th>Avatar</th>
+                    <th>ID Producto</th>
+                    <th>Descripción</th>
+                    <th>Estado</th>
+                    <th>Categroias</th>
+                    <th>Precio</th>
+                    <th>Stock</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="producto : ${lstProductos}">
+                    <td>
+                        <h2 class="table-avatar">
+                            <a href="#" class="avatar"><img alt="" src="#"></a>
+                            <a href="#">John Doe <span>Web Designer</span></a>
+                        </h2>
+                    </td>
+                    <td th:text="${producto.idprod}"></td>
+                    <td th:text="${producto.descripcion}"></td>
+                    <td th:text="${producto.estado}"></td>
+                    <td th:text="${producto.categoria.nombrecategoria}" ></td>
+                    <td th:text="${producto.precio}"></td>
+                    <td th:text="${producto.stock}"></td>
+                    <td class="text-right">
+                        <div class="dropdown dropdown-action">
+                            <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a class="dropdown-item update-btn" href="#" data-toggle="modal"  data-target="#update_producto" th:data-id="${producto.idprod}"> Editar</a>
+                                <a class="dropdown-item delete-btn" th:href="@{/deleteProducto/{idprod}(idprod=${producto.idprod})}" data-toggle="modal" th:data-id="${producto.idprod}"> Borrar</a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                    <script>
+                        $(document).ready(function() {
+                            $('.delete-btn').on('click', function(e) {
+                                e.preventDefault();
+                                var idprod = $(this).attr('data-id');
+
+                                // Muestra la confirmacion para borrar
+                                var confirmDelete = confirm("Esta seguro que desea borrar ese producto?");
+
+                                // procede con el brorrado si el usuaio confirma
+                                if (confirmDelete) {
+                                    // Hacer con AJAX un request para el delete endpoint
+                                    $.ajax({
+                                        url: '/Producto/deleteProducto/' + idprod,
+                                        type: 'GET',
+                                        success: function(response) {
+                                            // Manejo del delete (opcional)
+                                            console.log('Delete request successful');
+
+
+                                            // redirecionar a la lista de productos
+                                            window.location.href = '/Producto/listadoProductos';
+                                        },
+                                        error: function(xhr, status, error) {
+                                            // en caso de error
+                                            console.log('Error occurred while deleting: ' + error);
+
+                                        }
+                                    });
+                                }
+                            });
+                        });
+
+                        $(document).ready(function() {
+                            $('.update-btn').on('click', function(e) {
+                                e.preventDefault();
+                                var idprod = $(this).data('id');
+
+                                // Hacer con AJAX un request to fetch the product details
+                                $.ajax({
+                                    url: '/Producto/updateProducto/' + idprod,
+                                    type: 'GET',
+                                    success: function(response) {
+                                        // Manejo de  success response
+                                        console.log(response);
+                                        console.log('Update request successful');
+
+                                        // Cargar the modal con los  product details
+                                        $('#update_producto').find('input[name="idprod"]').val(response.idprod);
+                                        $('#update_producto').find('input[name="descripcion"]').val(response.descripcion);
+                                        $('#update_producto').find('input[name="estado"]').val(response.estado);
+                                        $('#update_producto').find('input[name="categoria.idtipo"]').val(response.categoria.idtipo);
+                                        $('#update_producto').find('input[name="precio"]').val(response.precio);
+                                        $('#update_producto').find('input[name="stock"]').val(response.stock);
+
+                                        // Mostrar the modal
+                                        $('#update_producto').modal('show');
+
+                                    },
+                                    error: function(xhr, status, error) {
+                                        // Manejo de error error response
+                                        console.log(idprod);
+                                        console.log('Error occurred while updating: ' + error);
+
+                                    }
+                                });
+                            });
+                        });
+
+                    </script>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+
+
+<!-- Agregar Producto Modal -->
+<div id="add_producto" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Agregar Producto</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" >
+                <form th:action="@{saveProducto}" th:object="${producto}" method="POST">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Descripcion <span class="text-danger">*</span></label>
+                                <input class="form-control" type="text" th:field="*{descripcion}">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Estado</label>
+                                <input class="form-control" type="number" th:field="*{estado}">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Categoria <span class="text-danger">*</span></label>
+                                <td >
+
+                                    <div class="dropdown">
+                                        <a id="categoryDropdown" class="btn btn-white btn-sm btn-rounded dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                            <span th:if="${producto.categoria != null}" th:text="${producto.categoria.nombrecategoria}"  ></span>
+                                            <span th:unless="${categoria != null}">Select Category</span>
+                                        </a>
+                                        <div class="dropdown-menu">
+                                            <a th:each="categoria : ${lstCategoria}" class="dropdown-item" th:text="${categoria.nombrecategoria}" th:data-idtipo="${categoria.idtipo}" onclick="selectCategory(this)"></a>
+                                        </div>
+                                    </div>
+                                    <input id="categoriaIdInput" type="hidden" th:field="*{categoria.idtipo}">
+
+                                    <script>
+                                        function selectCategory(element) {
+                                            var selectedCategory = $(element).text();
+                                            var categoryId = $(element).data("idtipo");
+                                            console.log(categoryId);
+                                            $('#categoryDropdown').html(selectedCategory);
+                                            $('#categoriaIdInput').val(categoryId);
+                                        }
+                                    </script>
+                                </td>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Precio <span class="text-danger">*</span></label>
+                                <input class="form-control" type="number" th:field="*{precio}">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Stock <span class="text-danger">*</span></label>
+                                <input class="form-control" type="number" th:field="*{stock}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="submit-section">
+                        <button class="btn btn-primary submit-btn">Agregar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Add Producto Modal -->
+
+<!-- Update Producto Modal -->
+<div id="update_producto" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Producto</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" >
+                <form th:action="@{/Producto/saveProducto}" th:object="${producto}" method="POST" >
+
+                    <div class="row">
+                        <!-- Add hidden form field to handle update -->
+                        <input type="hidden"   th:field="*{idprod}" />
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Descripcion <span class="text-danger">*</span></label>
+                                <input class="form-control" type="text" th:field="*{descripcion}">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Estado</label>
+                                <input class="form-control" type="number" th:field="*{estado}">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">IdTipo <span class="text-danger">*</span></label>
+                                <input class="form-control" type="text" th:field="*{categoria.idtipo}">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Precio <span class="text-danger">*</span></label>
+                                <input class="form-control" type="text" th:field="*{precio}">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Stock <span class="text-danger">*</span></label>
+                                <input class="form-control" type="number" th:field="*{stock}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="submit-section">
+                        <button class="btn btn-primary submit-btn">Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Update Producto Modal -->
+
+</body>
+</html>
