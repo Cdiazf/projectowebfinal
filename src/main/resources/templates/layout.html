@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="en"  xmlns:th="http://www.thymeleaf.org">
+<html lang="en"   xmlns:th="http://www.thymeleaf.org"
+                  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+
 <head th:fragment="head">
     <meta charset="UTF-8">
   <!-- Add Bootstrap 5 CSS -->
@@ -153,6 +155,7 @@
         <a class="dropdown-item" href="#">My Profile</a>
         <a class="dropdown-item" href="#">Settings</a>
         <a class="dropdown-item" href="#">Logout</a>
+
       </div>
     </div>
     <!-- /Mobile Menu -->
@@ -201,7 +204,9 @@
 
           
         </ul>
-      </li>
+      </li >
+        <li class="submenu" sec:authorize="isAuthenticated()"><a th:href="@{/logout}">Logout</a></li>
+
       </ul>
     </div>
   </div>
