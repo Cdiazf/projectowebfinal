@@ -22,11 +22,10 @@
                     </ul>
                 </div>
                 <div class="col-auto float-right ml-auto">
-                    <a href="#" class="btn add-btn" data-toggle="modal" data-target="#add_proveedor"><i class="fa fa-plus"></i> Agregar Proveedor</a>
-                    <div class="view-icons">
-                        <a href="#" class="grid-view btn btn-link"><i class="fa fa-th"></i></a>
-                        <a href="#" class="list-view btn btn-link active"><i class="fa fa-bars"></i></a>
-                    </div>
+                    <a href="#"  class="btn add-btn" style="margin-left: 5px;" data-toggle="modal" data-target="#add_proveedor"><i class="fa fa-plus"></i> Agregar Proveedor</a>
+                    <a  th:href="@{/exportarPDF}"  class=" btn btn-danger">Exportar a PDF</a> 
+                    <a  th:href="@{/exportarExcel}"  class=" btn btn-success">Exportar a Excel</a> 
+                    
                 </div>
             </div>
         </div>
@@ -42,7 +41,11 @@
                     <th>ID Proveedor</th>
                     <th>Nombre</th>
                     <th>Direccion</th>
-                    <th>Telefono</th>            
+                    <th>Telefono</th>
+                    <th>RUC</th>
+                    <th>Razon Social</th>
+                    <th>Pais</th>            
+                    <th>Ciudad</th>
                     <th>Acciones</th>
                 </tr>
                 </thead>
@@ -58,10 +61,16 @@
                     <td th:text="${proveedor.nombre}"></td>
                     <td th:text="${proveedor.direccion}"></td>
                     <td th:text="${proveedor.telefono}"></td>
+                    <td th:text="${proveedor.ruc}"></td>
+                    <td th:text="${proveedor.razonsocial}"></td>
+                    <td th:text="${proveedor.pais}"></td>
+                    <td th:text="${proveedor.ciudad}"></td>                    
                     <td class="text-right">
                         <div class="dropdown dropdown-action">
                             <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                             <div class="dropdown-menu dropdown-menu-right">
+                           
+                            	<a class="dropdown-item show-btn" href="#" data-toggle="modal"  data-target="#show_proveedor"   th:data-id="${proveedor.idprov}"> Ver</a>
                                 <a class="dropdown-item update-btn" href="#" data-toggle="modal"  data-target="#update_proveedor"   th:data-id="${proveedor.idprov}"> Editar</a>
                                 <a class="dropdown-item delete-btn" th:href="@{/deleteProveedor/{idprov}(idprov=${proveedor.idprov})}" data-toggle="modal" th:data-id="${proveedor.idprov}"> Borrar</a>
                             </div>
@@ -123,6 +132,10 @@
                                         $('#update_proveedor').find('input[name="nombre"]').val(response.nombre);
                                         $('#update_proveedor').find('input[name="direccion"]').val(response.direccion);
                                         $('#update_proveedor').find('input[name="telefono"]').val(response.telefono);
+                                        $('#update_proveedor').find('input[name="ruc"]').val(response.ruc);
+                                        $('#update_proveedor').find('input[name="razonsocial"]').val(response.razonsocial);
+                                        $('#update_proveedor').find('input[name="pais"]').val(response.pais);
+                                        $('#update_proveedor').find('input[name="ciudad"]').val(response.ciudad);
                                    
 
 
@@ -142,7 +155,53 @@
                             });
                         });
 
+                        		
+                        $(document).ready(function() {
+                            $('.show-btn').on('click', function(e) {
+                                e.preventDefault();
+                                var idprov = $(this).data('id');
 
+                                // Make an AJAX request to fetch the product details
+                                $.ajax({
+                                    url: '/Proveedor/showProveedor/' + idprov,
+                                    type: 'GET',
+                                    success: function(response) {
+                                        // Handle the success response
+                                        console.log(response);
+                                        console.log('Show request successful');
+                                        
+
+                                        // Populate the modal with the product details
+                                        $('#show_proveedor').find('input[name="idprov"]').val(response.idprov);
+                                        $('#show_proveedor').find('input[name="nombre"]').val(response.nombre);
+                                        $('#show_proveedor').find('input[name="direccion"]').val(response.direccion);
+                                        $('#show_proveedor').find('input[name="telefono"]').val(response.telefono);
+                                        $('#show_proveedor').find('input[name="ruc"]').val(response.ruc);
+                                        $('#show_proveedor').find('input[name="razonsocial"]').val(response.razonsocial);
+                                        $('#show_proveedor').find('input[name="pais"]').val(response.pais);
+                                        $('#show_proveedor').find('input[name="ciudad"]').val(response.ciudad);
+                                   
+
+
+                                        // Show the modal
+                                        $('#show_proveedor').modal('window.location.href = /Proveedor/listadoProveedor');
+                                        
+                                        
+                                    },
+                                    error: function(xhr, status, error) {
+                                    	
+                                        // Handle the error response
+                                        console.log(idprov);
+                                        console.log('Error occurred while updating: ' + error);
+                                        // Perform any error handling actions
+                                    }
+                                });
+                            });
+                        });
+                        
+                        
+                        
+                        
 
                     </script>
 
@@ -156,7 +215,7 @@
 </div>
 
 
-<!-- Agregar Producto Modal -->
+
 <div id="add_proveedor" class="modal custom-modal fade" role="dialog">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
@@ -188,7 +247,32 @@
                             </div>
                         </div>
                        
+                        <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-form-label">RUC</label>
+                            <input class="form-control" type="text" pattern="[0-9]{11}" th:field="*{ruc}">
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-form-label">Razon social <span class="text-danger">*</span></label>
+                            <input class="form-control" type="text"  th:field="*{razonsocial}">
+                        </div>
+                    </div>
                         
+                    <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-form-label">País</label>
+                        <input class="form-control" type="text" th:field="*{pais}">
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-form-label">Ciudad <span class="text-danger">*</span></label>
+                        <input class="form-control" type="text"  th:field="*{ciudad}">
+                    </div>
+                </div>
+                    
                     </div>
                     <div class="submit-section">
                         <button class="btn btn-primary submit-btn">Agregar</button>
@@ -198,9 +282,9 @@
         </div>
     </div>
 </div>
-<!-- /Add Producto Modal -->
 
-<!-- Actualizar Producto Modal -->
+
+
 <div id="update_proveedor" class="modal custom-modal fade" role="dialog">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
@@ -217,7 +301,8 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label class="col-form-label">Nombre <span class="text-danger">*</span></label>
-                                <input class="form-control" type="text" th:field="*{nombre}">
+                            
+                                <input class="form-control" type="text" th:field="*{nombre}" readonly>
                             </div>
                         </div>
                         <div class="col-sm-6">
@@ -231,7 +316,35 @@
                                 <label class="col-form-label">Telefono <span class="text-danger">*</span></label>
                                 <input class="form-control" type="text" pattern="[0-9]{9}" th:field="*{telefono}">
                             </div>
-                        </div>                                              
+                        </div>    
+                        
+                        <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-form-label">RUC</label>
+                            <input class="form-control" type="text" pattern="[0-9]{11}" th:field="*{ruc}">
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-form-label">Razon social <span class="text-danger">*</span></label>
+                            <input class="form-control" type="text"  th:field="*{razonsocial}">
+                        </div>
+                    </div>
+                        
+                    <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-form-label">País</label>
+                        <input class="form-control" type="text" th:field="*{pais}">
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-form-label">Ciudad <span class="text-danger">*</span></label>
+                        <input class="form-control" type="text"  th:field="*{ciudad}">
+                    </div>
+                </div>
+                        
+                        
                     </div>
                     <div class="submit-section">
                         <button class="btn btn-primary submit-btn">Update</button>
@@ -241,7 +354,75 @@
         </div>
     </div>
 </div>
-<!-- /Add Producto Modal -->
+
+
+
+<div id="show_proveedor" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Ver Proveedor</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"   >
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" >
+                <form th:action="@{showProveedor}" th:object="${proveedor}" method="GET">
+                    <div class="row">
+                    <input type="hidden"   th:field="*{idprov}" />
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Nombre</label>
+                                <input class="form-control" type="text" th:field="*{nombre}" readonly>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Direccion</label>
+                                <input class="form-control" type="text" th:field="*{direccion}"readonly>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Telefono </label>
+                                <input class="form-control" type="text"  th:field="*{telefono}" readonly>
+                            </div>
+                        </div>    
+                        
+                        <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-form-label">RUC</label>
+                            <input class="form-control" type="text" th:field="*{ruc}" readonly>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-form-label">Razon social </label>
+                            <input class="form-control" type="text"  th:field="*{razonsocial}" readonly>
+                        </div>
+                    </div>
+                        
+                    <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-form-label">País</label>
+                        <input class="form-control" type="text" th:field="*{pais}" readonly>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-form-label">Ciudad </label>
+                        <input class="form-control" type="text"  th:field="*{ciudad}" readonly>
+                    </div>
+                </div>
+                        
+                        
+                    </div>               
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 </body>
 </html>
