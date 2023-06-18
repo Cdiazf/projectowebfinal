@@ -1,3 +1,4 @@
+
 create database projectoalmacen2;
 use projectoalmacen2;
 Create table tb_productos(
@@ -13,6 +14,7 @@ foreign key (idprov) references tb_proveedores(idprov),
 foreign key (idtipo) references tb_categorias(idtipo),
 constraint pk_tb_productos primary key(idprod) 
 );
+select * from tb_proveedores;
 Create table tb_categorias(
 idtipo int not null auto_increment,
 nombrecategoria varchar(100),
@@ -53,14 +55,14 @@ CREATE TABLE `users_roles` (
   PRIMARY KEY (`user_id`, `role_id`)
 );
 
-create table tb_ordenes_de_compra(
-idorden int not null auto_increment,
-descripcion varchar(255),
-fecha DATE,
-total decimal,
-idprov int,
-idusu int,
-foreign key (idprov) references tb_proveedores(idprov),
-foreign key (idusu) references tb_usuarios(idusu),
-constraint pk_tb_ordenes_de_compra primary key (idorden)
+CREATE TABLE tb_ordenes_de_compra (
+    idorden INT NOT NULL AUTO_INCREMENT,
+    descripcion VARCHAR(255),
+    fecha DATE,
+    total DECIMAL,
+    idprov INT,
+    idusu BIGINT,
+    CONSTRAINT fk_user_oc FOREIGN KEY (idusu) REFERENCES `user` (id) ON DELETE CASCADE,
+    CONSTRAINT fk_proveedor_oc FOREIGN KEY (idprov) REFERENCES tb_proveedores (idprov) ON DELETE CASCADE,
+    CONSTRAINT pk_tb_ordenes_de_compra PRIMARY KEY (idorden)
 );
