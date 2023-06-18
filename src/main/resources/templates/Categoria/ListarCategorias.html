@@ -54,7 +54,7 @@
                     <div class="dropdown dropdown-action">
                       <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                       <div class="dropdown-menu dropdown-menu-right">
-                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#edit_department"><i class="fa fa-pencil m-r-5"></i> Edit</a>
+                        <a class="dropdown-item update-btn" href="#" data-toggle="modal" data-target="#update_categoria" th:data-id="${categoria.idtipo}"><i class="fa fa-pencil m-r-5"></i>Edit</a>
                         <a class="dropdown-item delete-btn" th:href="@{/deleteCategoria/{idtipo}(idtipo=${categoria.idtipo})}" data-toggle="modal" data-target="#delete_department" th:data-id="${categoria.idtipo}"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
                       </div>
 
@@ -98,12 +98,50 @@
                             $('#delete_department').modal('hide');
 
                             // Go back to the previous page
-                            history.back();
+                            window.location.href = '/Categoria/listarCategorias';
                           });
 
                         });
 
-                      </script>
+                        
+                        
+                        $(document).ready(function() {
+                            $('.update-btn').on('click', function(e) {
+                                e.preventDefault();
+                                var idtipo = $(this).data('id');
+
+                                // Hacer con AJAX un request to fetch the product details
+                                $.ajax({
+                                    url: '/Categoria/updateCategoria/' + idtipo,
+                                    type: 'GET',
+                                    success: function(response) {
+                                        // Manejo de  success response
+                                        console.log(response);
+                                        console.log('Update request successful');
+
+                                        // Cargar the modal con los  product details
+                                        $('#update_categoria').find('input[name="idtipo"]').val(response.idtipo);
+                                        $('#update_categoria').find('input[name="nombrecategoria"]').val(response.nombrecategoria);
+                                      
+
+                                        // Mostrar the modal
+                                        $('#update_categoria').modal('window.location.href = /Categoria/listarCategorias');
+
+                                    },
+                                    error: function(xhr, status, error) {
+                                        // Manejo de error error response
+                                        console.log(idtipo);
+                                        console.log('Error occurred while updating: ' + error);
+
+                                    }
+                                });
+                            });
+                        });
+                        
+                        
+                        
+                        
+                      </script>                                                            
                     </div>
                   </td>
                 </tr>
@@ -141,31 +179,38 @@
   </div>
   <!-- /Add Categoria Modal -->
 
-  <!-- Edit Categoria Modal -->
-  <div id="edit_department" class="modal custom-modal fade" role="dialog">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Editar Categoria</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <form>
-            <div class="form-group">
-              <label>Nombre de Categoria <span class="text-danger">*</span></label>
-              <input class="form-control" value="IT Management" type="text">
-            </div>
-            <div class="submit-section">
-              <button class="btn btn-primary submit-btn">Grabar</button>
-            </div>
-          </form>
-        </div>
+  <!-- Update Producto Modal -->
+  <div id="update_categoria" class="modal custom-modal fade" role="dialog">
+      <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title">Editar Categoria</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div class="modal-body" >
+                  <form th:action="@{/Categoria/saveCategoria}" th:object="${categorias}" method="POST" >
+
+                      <div class="row">
+                          <!-- Add hidden form field to handle update -->
+                          <input type="hidden"   th:field="*{idtipo}" />
+                          <div class="col-sm-6">
+                              <div class="form-group">
+                                  <label class="col-form-label">Nombre  <span class="text-danger">*</span></label>
+                                  <input class="form-control" type="text" th:field="*{nombrecategoria}">
+                              </div>
+                          </div>
+                         
+                      </div>
+                      <div class="submit-section">
+                          <button class="btn btn-primary submit-btn">Actualizar</button>
+                      </div>
+                  </form>
+              </div>
+          </div>
       </div>
-    </div>
   </div>
-  <!-- /Edit Categoria Modal -->
 
   <!-- Delete Categoria Modal -->
   <div class="modal custom-modal fade" id="delete_department" role="dialog">
