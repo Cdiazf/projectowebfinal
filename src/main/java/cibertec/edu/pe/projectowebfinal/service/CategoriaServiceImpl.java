@@ -20,7 +20,7 @@ public class CategoriaServiceImpl implements CategoriaService{
     }
 
     @Override
-    public Categorias getCategoriaById(int idtipo) {
+    public Categorias getCategoriaById(Integer idtipo) {
         Optional<Categorias> optional=categoriaRepository.findById(idtipo);
         Categorias categorias=null;
         if(optional.isPresent()){
@@ -37,7 +37,7 @@ public class CategoriaServiceImpl implements CategoriaService{
     }
 
     @Override
-    public void deleteCategoryById(int idtipo) {
+    public void deleteCategoryById(Integer idtipo) {
         this.categoriaRepository.deleteById(idtipo);
     }
 }
