@@ -7,8 +7,8 @@ import java.util.List;
 
 public interface CategoriaService {
     List<Categorias> getAllCategorias();
-    Categorias getCategoriaById(int idtipo);
+    Categorias getCategoriaById(Integer idtipo);
     void saveCategoria(Categorias categorias);
-    void deleteCategoryById(int idtipo);
+    void deleteCategoryById(Integer idtipo);
 
 }
