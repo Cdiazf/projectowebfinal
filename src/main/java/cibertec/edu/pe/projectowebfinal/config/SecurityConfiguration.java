@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
@@ -38,11 +39,15 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests().antMatchers(
+        http.csrf().disable()
+        .authorizeRequests()
+                .antMatchers(
                         "/registration**",
                         "/js/**",
                         "/css/**",
-                        "/img/**").permitAll()
+                        "/img/**"
+                        ).permitAll()
+                .antMatchers("/Producto/consultar").authenticated() // Requ
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
@@ -55,5 +60,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                 .logoutSuccessUrl("/login?logout")
                 .permitAll();
+//                .and()
+//                .csrf() // Enable CSRF protection
+//                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()); // Use cookie-based CSRF tokens
+
     }
 }

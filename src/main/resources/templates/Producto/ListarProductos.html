@@ -24,6 +24,8 @@
                 <div class="col-auto float-right ml-auto">
                     <a href="#" class="btn add-btn" data-toggle="modal" data-target="#add_producto"><i class="fa fa-plus"></i> Agregar Producto</a>
                     <div class="view-icons">
+
+                        <div class="view-icons">
                         <a href="#" class="grid-view btn btn-link"><i class="fa fa-th"></i></a>
                         <a href="#" class="list-view btn btn-link active"><i class="fa fa-bars"></i></a>
                     </div>
@@ -55,49 +57,51 @@
             <div class="col-sm-6 col-md-3">
                 <a href="#" class="btn btn-success btn-block" onclick="buscarProductos()">Buscar</a>
             </div>
+            <!-- Add the CSRF token field -->
+            <input type="hidden" id="csrfToken" value="${_csrf.token}" />
 
         </div>
         <!-- Search Filter -->
 
-        <script>
-            function buscarProductos() {
-                var nombre = $("#nombre").val();
-                var idTipo = $("#idTipo").val();
-                var estado = $("#estado").val();
+            <script>
+                function buscarProductos() {
+                    var nombre = $("#nombre").val();
+                    var idTipo = $("#idTipo").val();
+                    var estado = $("#estado").val();
 
-                var request = {
-                    descripcion: nombre,
-                    idTipo: idTipo,
-                    estado: estado
-                };
+                    var request = {
+                        descripcion: nombre,
+                        idTipo: idTipo,
+                        estado: estado
+                    };
 
-                $.ajax({
-                    url: "/Producto/consultar",
-                    type: "POST",
-                    contentType: "application/json",
-                    data: JSON.stringify(request),
+                    $.ajax({
+                        url: "/Producto/consultar",
+                        type: "POST",
+                        contentType: "application/json",
+                        data: JSON.stringify(request),
 
-                    success: function(response) {
-                        // Update the table with the fetched data
-                        console.log(response);
-                        console.log(estado);
+                        success: function(response) {
+                            // Update the table with the fetched data
+                            console.log(response);
+                            console.log(estado);
 
-                        $("#productos-table tbody").html(response);
-                    },
-                    error: function(xhr, status, error) {
+                            $("#productos-table tbody").html(response);
+                        },
+                        error: function(xhr, status, error) {
 
-                        console.log("Error occurred while searching: " + error);
-                    }
-                });
-            }
-
-
-        </script>
+                            console.log("Error occurred while searching: " + error);
+                        }
+                    });
+                }
 
 
+            </script>
 
 
-<div class="row">
+
+
+            <div class="row">
     <div class="col-md-12">
         <div class="table-responsive">
             <table class="table table-striped custom-table datatable" id="productos-table">

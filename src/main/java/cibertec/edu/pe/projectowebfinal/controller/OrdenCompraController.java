@@ -1,5 +1,6 @@
 package cibertec.edu.pe.projectowebfinal.controller;
 
+import cibertec.edu.pe.projectowebfinal.service.ProductoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 
@@ -22,6 +23,8 @@ public class OrdenCompraController {
 	private OrdenCompraService ordenCompraService;
 	@Autowired
 	private ProveedorService proveedorService;
+	@Autowired
+	private ProductoService productoService;
 
 	//private UsuarioService usuarioService;
 	
@@ -32,7 +35,16 @@ public class OrdenCompraController {
 		model.addAttribute("lstProveedor",proveedorService.getAllProveedores());
 		//model.addAttribute("lstUsuario",usuarioService.getAllUsuarios());
 		model.addAttribute("ordenCompra",ordenCompra);
-		return "Orden/ListarOrden";
+		return "OrdenCompra/ListarOrden";
+	}
+
+	@GetMapping("/createOP")
+	public String ShowOrderForm(Model model ){
+		OrdenCompra ordenCompra = new OrdenCompra();
+		model.addAttribute("lstProductos",productoService.getAllProductos());
+		model.addAttribute("lstProveedor", proveedorService.getAllProveedores());
+		model.addAttribute("ordenCompra", ordenCompra);
+		return "OrdenCompra/CreateOrden";
 	}
 
 	@PostMapping("/saveOrden")

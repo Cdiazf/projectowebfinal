@@ -10,7 +10,6 @@ import java.util.Collection;
 
 @Entity
 @Data
-
 @AllArgsConstructor
 @Table(name =  "user", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
 public class User {
@@ -41,6 +40,8 @@ public class User {
 
     @Column(name = "role")
     private Collection<Role> roles;
+
+
 
     public User() {
 

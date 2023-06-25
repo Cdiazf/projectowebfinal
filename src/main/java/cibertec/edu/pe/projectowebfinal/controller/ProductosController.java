@@ -1,13 +1,14 @@
 package cibertec.edu.pe.projectowebfinal.controller;
 
-import cibertec.edu.pe.projectowebfinal.model.Categorias;
+
 import cibertec.edu.pe.projectowebfinal.model.Producto;
-import cibertec.edu.pe.projectowebfinal.repository.IProductoRepository;
+
 import cibertec.edu.pe.projectowebfinal.request.ConsultaProductosRequest;
 import cibertec.edu.pe.projectowebfinal.service.CategoriaService;
 import cibertec.edu.pe.projectowebfinal.service.ProductoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -60,7 +61,7 @@ public class ProductosController {
         return "redirect:/Producto/listadoProductos";
     }
 
-
+    @PreAuthorize("hasRole('ROLE_USER')") // Agrega la anotación @PreAuthorize con la expresión de autorización deseada
     @PostMapping("/consultar")
     public ResponseEntity<String> consultarProductos(@RequestBody ConsultaProductosRequest request) {
         // Extract the parameters from the request object
@@ -90,8 +91,6 @@ public class ProductosController {
 
         // Return the HTML markup as the response
         return ResponseEntity.ok(htmlMarkup);
-        }
-
-
+    }
 
 }
